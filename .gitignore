@@ -5,7 +5,7 @@ frontend/src/config.js~
 venv/
 *.tfvars
 .terraform/
-terraform.tfstate
+*.tfstate
 terraform.tfstate.backup
 *.pem
 .DS_Store

@@ -220,15 +220,30 @@ resource "aws_instance" "grocery-shop-webserver" {
   vpc_security_group_ids      = [aws_security_group.web_sg.id]
   key_name                    = "masterschool-cloud-course"
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<-EOF
-              #!/bin/bash
-              dnf update -y
-              dnf install -y docker postgresql15
-              systemctl start docker
-              systemctl enable docker
-              usermod -aG docker ec2-user
-              EOF
+    #!/bin/bash
+    dnf update -y
+    dnf install -y docker
+    systemctl start docker
+    systemctl enable docker
+
+    # Login bei ECR (auf der EC2)
+    aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 156332912416.dkr.ecr.eu-central-1.amazonaws.com
+
+    # Image ziehen und starten
+    docker pull 156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
+    docker run -d --network host \
+      -e POSTGRES_USER=${var.db_user} \
+      -e POSTGRES_PASSWORD=${var.db_password} \
+      -e POSTGRES_HOST=${aws_db_instance.aws_shop_db.address} \
+      -e POSTGRES_DB=${var.db_name} \
+      -e JWT_SECRET=${var.jwt_secret} \
+      -p 5000:5000 \
+      156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
+  EOF
+
 
   tags = {
     Name = "grocery-shop-webserver"
@@ -242,4 +257,26 @@ resource "aws_ecr_repository" "app_repo" {
   image_scanning_configuration {
     scan_on_push = true
   }
+}
+
+resource "aws_iam_role" "ec2_role" {
+  name = "grocery_ec2_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_read" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "grocery_ec2_profile"
+  role = aws_iam_role.ec2_role.name
 }

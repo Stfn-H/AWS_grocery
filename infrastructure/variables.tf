@@ -34,14 +34,26 @@ variable "public_subnet_cidr" {
   default     = "10.0.1.0/24"
 }
 
-variable "db_username" {
-  description = "DB admin username"
+variable "db_user" {
+  description = "DB USername"
   type        = string
-  default     = "admin"
+  default     = "postgres" # Standardwert, kann so bleiben
+}
+
+variable "db_name" {
+  description = "DB Name"
+  type        = string
+  default     = "postgres" # Standardwert
 }
 
 variable "db_password" {
-  description = "DB Admin Password"
+  description = "DB Password"
+  type        = string
+  sensitive   = true # Versteckt die Eingabe im Terminal
+}
+
+variable "jwt_secret" {
+  description = "secret key"
   type        = string
   sensitive   = true
 }

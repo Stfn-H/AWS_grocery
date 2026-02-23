@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket         = "aws-grocery-tfstate-backend-200226"
-    key            = "global/s3/terraform.tfstate"
+    bucket         = "grocery-shop-tfstate-2b1f697b"
+    key            = "grocery-shop/terraform.tfstate"
     region         = "eu-central-1"
     dynamodb_table = "terraform-state-locking"
     encrypt        = true
@@ -18,42 +18,6 @@ terraform {
 provider "aws" {
   region  = var.aws_region
   profile = var.aws_profile
-}
-
-# S3 Bucket for backend
-resource "aws_s3_bucket" "terraform_state" {
-  bucket        = var.state_bucket_name
-  force_destroy = true
-}
-
-# versioning
-resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
-  bucket = aws_s3_bucket.terraform_state.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-# Encryption
-resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_crypto_conf" {
-  bucket = aws_s3_bucket.terraform_state.id
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
-# DynamoDB table for locking
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = var.dynamodb_table_name
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
 }
 
 # VPC
@@ -213,52 +177,6 @@ resource "aws_db_instance" "aws_shop_db" {
   }
 }
 
-resource "aws_instance" "grocery-shop-webserver" {
-  ami                         = "ami-0bae57ee7c4478e01"
-  instance_type               = "t3.micro"
-  subnet_id                   = aws_subnet.public.id
-  vpc_security_group_ids      = [aws_security_group.web_sg.id]
-  key_name                    = "masterschool-cloud-course"
-  associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
-
-  user_data = <<-EOF
-    #!/bin/bash
-    dnf update -y
-    dnf install -y docker
-    systemctl start docker
-    systemctl enable docker
-
-    # Login bei ECR (auf der EC2)
-    aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 156332912416.dkr.ecr.eu-central-1.amazonaws.com
-
-    # Image ziehen und starten
-    docker pull 156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
-    docker run -d --network host \
-      -e POSTGRES_USER=${var.db_user} \
-      -e POSTGRES_PASSWORD=${var.db_password} \
-      -e POSTGRES_HOST=${aws_db_instance.aws_shop_db.address} \
-      -e POSTGRES_DB=${var.db_name} \
-      -e JWT_SECRET=${var.jwt_secret} \
-      -p 5000:5000 \
-      156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
-  EOF
-
-
-  tags = {
-    Name = "grocery-shop-webserver"
-  }
-}
-
-# ECR Repository for Dockerfile
-resource "aws_ecr_repository" "app_repo" {
-  name                 = "grocery-shop-repo"
-  image_tag_mutability = "MUTABLE"
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
 # IAM role for EC2 to pull the DOckerfile from ECR
 resource "aws_iam_role" "ec2_role" {
   name = "grocery_ec2_role"
@@ -280,4 +198,42 @@ resource "aws_iam_role_policy_attachment" "ecr_read" {
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "grocery_ec2_profile"
   role = aws_iam_role.ec2_role.name
+}
+
+# EC2 Instance
+resource "aws_instance" "grocery-shop-webserver" {
+  ami                         = "ami-0bae57ee7c4478e01"
+  instance_type               = "t3.micro"
+  subnet_id                   = aws_subnet.public.id
+  vpc_security_group_ids      = [aws_security_group.web_sg.id]
+  key_name                    = "masterschool-cloud-course"
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
+
+  user_data = <<-EOF
+    #!/bin/bash
+    dnf update -y
+    dnf install -y docker
+    systemctl start docker
+    systemctl enable docker
+
+    # ECR login on EC2
+    aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 156332912416.dkr.ecr.eu-central-1.amazonaws.com
+
+    # Docker image pull
+    docker pull 156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
+    docker run -d --network host \
+      -e POSTGRES_USER=${var.db_user} \
+      -e POSTGRES_PASSWORD=${var.db_password} \
+      -e POSTGRES_HOST=${aws_db_instance.aws_shop_db.address} \
+      -e POSTGRES_DB=${var.db_name} \
+      -e JWT_SECRET=${var.jwt_secret} \
+      -p 5000:5000 \
+      156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
+  EOF
+
+
+  tags = {
+    Name = "grocery-shop-webserver"
+  }
 }

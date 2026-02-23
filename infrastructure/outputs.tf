@@ -7,8 +7,3 @@ output "database_endpoint" {
   description = "RDS-DB DNS Endpoint"
   value       = aws_db_instance.aws_shop_db.endpoint
 }
-
-output "ecr_repository_url" {
-  description = "Repo URL"
-  value       = aws_ecr_repository.app_repo.repository_url
-}

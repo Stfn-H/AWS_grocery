@@ -10,18 +10,6 @@ variable "aws_profile" {
   default     = "AdministratorAccess-156332912416"
 }
 
-variable "state_bucket_name" {
-  description = "S3 bucket name for terraform backend"
-  type        = string
-  default     = "aws-grocery-tfstate-backend-200226"
-}
-
-variable "dynamodb_table_name" {
-  description = "DynamoDB table name for state locking"
-  type        = string
-  default     = "terraform-state-locking"
-}
-
 variable "vpc_cidr" {
   description = "IP range for VPC"
   type        = string

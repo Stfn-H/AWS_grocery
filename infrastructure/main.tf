@@ -259,6 +259,7 @@ resource "aws_ecr_repository" "app_repo" {
   }
 }
 
+# IAM role for EC2 to pull the DOckerfile from ECR
 resource "aws_iam_role" "ec2_role" {
   name = "grocery_ec2_role"
   assume_role_policy = jsonencode({

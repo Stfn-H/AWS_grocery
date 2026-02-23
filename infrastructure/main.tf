@@ -84,6 +84,23 @@ resource "aws_subnet" "public" {
   }
 }
 
+# ROute Table
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+  tags = {
+    Name = "aws-shop-public-rt"
+  }
+}
+
+resource "aws_route_table_association" "public_rt_association" {
+  route_table_id = aws_route_table.public_rt.id
+  subnet_id      = aws_subnet.public.id
+}
+
 # security group
 resource "aws_security_group" "web_sg" {
   name        = "web-server-sg"
@@ -169,9 +186,11 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "aws_shop_db" {
-  identifier = "aws-grocery-rds"
+  identifier          = "aws-grocery-db"
   snapshot_identifier = var.db_snapshot_identifier
-  instance_class    = "db.t3.micro"
+  instance_class      = "db.t3.micro"
+  storage_encrypted   = true #added because it was enabled also in the snapshot
+
   # not needed while using snapshot
   # allocated_storage = 20
   # storage_type      = "gp2"
@@ -213,5 +232,14 @@ resource "aws_instance" "grocery-shop-webserver" {
 
   tags = {
     Name = "grocery-shop-webserver"
+  }
+}
+
+# ECR Repository for Dockerfile
+resource "aws_ecr_repository" "app_repo" {
+  name                 = "grocery-shop-repo"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
   }
 }

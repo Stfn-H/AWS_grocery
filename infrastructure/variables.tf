@@ -45,3 +45,9 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "db_snapshot_identifier" {
+  description = "snapshot with dummy data: aws-grocery-db-snapshot-v1"
+  type = string
+  default = "aws-grocery-db-snapshot-v1"
+}

@@ -1,10 +1,10 @@
 terraform {
   backend "s3" {
-    bucket          = "aws-grocery-tfstate-backend-200226"
-    key             = "global/s3/terraform.tfstate"
-    region          = "eu-central-1"
-    dynamodb_table  = "terraform-state-locking"
-    encrypt         = true
+    bucket         = "aws-grocery-tfstate-backend-200226"
+    key            = "global/s3/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "terraform-state-locking"
+    encrypt        = true
   }
 
   required_providers {
@@ -22,7 +22,7 @@ provider "aws" {
 
 # S3 Bucket for backend
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = var.state_bucket_name
+  bucket        = var.state_bucket_name
   force_destroy = true
 }
 
@@ -46,9 +46,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_c
 
 # DynamoDB table for locking
 resource "aws_dynamodb_table" "terraform_locks" {
-  name          = var.dynamodb_table_name
-  billing_mode  = "PAY_PER_REQUEST"
-  hash_key      = "LockID"
+  name         = var.dynamodb_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
 
   attribute {
     name = "LockID"
@@ -58,7 +58,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
 
 # VPC
 resource "aws_vpc" "main" {
-  cidr_block = var.vpc_cidr
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   tags = {
     Name = "aws-shop-vpc"
@@ -75,10 +75,10 @@ resource "aws_internet_gateway" "main" {
 
 # public subnet
 resource "aws_subnet" "public" {
-  vpc_id = aws_vpc.main.id
-  cidr_block = var.public_subnet_cidr
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = true
-  availability_zone = "${var.aws_region}a"
+  availability_zone       = "${var.aws_region}a"
   tags = {
     Name = "aws-shop-public-subnet"
   }
@@ -119,8 +119,8 @@ resource "aws_security_group" "web_sg" {
 
 # DB subnets
 resource "aws_subnet" "db_subnet_a" {
-  vpc_id = aws_vpc.main.id
-  cidr_block = "10.0.10.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.10.0/24"
   availability_zone = "${var.aws_region}a"
   tags = {
     Name = "aws-shop-private-subnet-a"
@@ -128,8 +128,8 @@ resource "aws_subnet" "db_subnet_a" {
 }
 
 resource "aws_subnet" "db_subnet_b" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.11.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.11.0/24"
   availability_zone = "${var.aws_region}b"
   tags = {
     Name = "aws-shop-private-subnet-b"
@@ -137,7 +137,7 @@ resource "aws_subnet" "db_subnet_b" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
-  name = "aws-shop-db-subnet-group"
+  name       = "aws-shop-db-subnet-group"
   subnet_ids = [aws_subnet.db_subnet_a.id, aws_subnet.db_subnet_b.id]
   tags = {
     Name = "aws-shop-db-subnet-group"
@@ -150,9 +150,9 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port = 5432
-    to_port = 5432
-    protocol = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
     security_groups = [aws_security_group.web_sg.id]
   }
 
@@ -169,22 +169,22 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "aws_shop_db" {
-  instance_class = "db.t3.micro"
+  instance_class    = "db.t3.micro"
   allocated_storage = 20
-  storage_type = "gp2"
-  engine = "postgres"
-  engine_version = "17.6"
+  storage_type      = "gp2"
+  engine            = "postgres"
+  engine_version    = "17.6"
 
-  db_name = "aws_shop_db"
+  db_name  = "aws_shop_db"
   username = var.db_username
   password = var.db_password
 
-  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
+  db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 
   publicly_accessible = false
   skip_final_snapshot = true
-  multi_az = false
+  multi_az            = false
 
   tags = {
     Name = "aws-shop-postgres-db"
@@ -192,11 +192,11 @@ resource "aws_db_instance" "aws_shop_db" {
 }
 
 resource "aws_instance" "grocery-shop-webserver" {
-  ami = "ami-0bae57ee7c4478e01"
-  instance_type = "t3.micro"
-  subnet_id = aws_subnet.public.id
-  vpc_security_group_ids = [aws_security_group.web_sg.id]
-  key_name = "masterschool-cloud-course"
+  ami                         = "ami-0bae57ee7c4478e01"
+  instance_type               = "t3.micro"
+  subnet_id                   = aws_subnet.public.id
+  vpc_security_group_ids      = [aws_security_group.web_sg.id]
+  key_name                    = "masterschool-cloud-course"
   associate_public_ip_address = true
 
   user_data = <<-EOF

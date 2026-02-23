@@ -169,6 +169,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_instance" "aws_shop_db" {
+  identifier = "aws-grocery-rds"
   snapshot_identifier = var.db_snapshot_identifier
   instance_class    = "db.t3.micro"
   # not needed while using snapshot

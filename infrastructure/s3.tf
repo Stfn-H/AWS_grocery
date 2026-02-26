@@ -5,10 +5,10 @@ resource "random_id" "bucket_suffix" {
 
 # s3 bucket
 resource "aws_s3_bucket" "avatars" {
-  bucket = "grocerymate-avatars"
+  bucket = "grocerymate-avatars-${random_id.bucket_suffix.hex}"
 
   tags = {
-    Name = "grocerymate-avatars-${random_id.bucket_suffix.hex}"
+    Name = "grocerymate-avatars"
     Environment = "Dev"
   }
 }

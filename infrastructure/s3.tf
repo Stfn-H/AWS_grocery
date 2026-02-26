@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "avatars" {
   bucket = "grocerymate-avatars"
 
   tags = {
-    Name = "grocerymate-avatars"
+    Name = "grocerymate-avatars-${random_id.bucket_suffix.hex}"
     Environment = "Dev"
   }
 }

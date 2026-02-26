@@ -20,7 +20,10 @@ resource "aws_instance" "grocery-shop-webserver" {
 
     # Docker image pull
     docker pull 156332912416.dkr.ecr.eu-central-1.amazonaws.com/grocery-shop-repo:latest
-    docker run -d --network host \
+    docker run -d --network host\
+      -e S3_BUCKET_NAME=${aws_s3_bucket.avatars.id} \
+      -e S3_REGION=${var.aws_region} \
+      -e USE_S3_STORAGE=true \
       -e POSTGRES_USER=${var.db_user} \
       -e POSTGRES_PASSWORD=${var.db_password} \
       -e POSTGRES_HOST=${aws_db_instance.aws_shop_db.address} \

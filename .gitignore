@@ -10,3 +10,4 @@ terraform.tfstate.backup
 *.pem
 .DS_Store
 .terraform.lock.hcl
+ec2.tf

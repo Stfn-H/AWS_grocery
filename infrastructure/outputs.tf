@@ -1,11 +1,6 @@
-output "webserver_ip" {
-  description = "public IP - EC2"
-  value       = aws_instance.grocery-shop-webserver.public_ip
-}
-
-output "webserver_dns" {
-  description = "public DNS - EC2"
-  value = aws_instance.grocery-shop-webserver.public_dns
+output "alb-dns-name" {
+  description = "ALB - public URL"
+  value       = aws_lb.alb.dns_name
 }
 
 output "database_endpoint" {

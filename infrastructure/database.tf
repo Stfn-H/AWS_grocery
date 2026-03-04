@@ -25,6 +25,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
   }
 }
 
+# RDS Security Group
 resource "aws_security_group" "rds_sg" {
   name        = "aws-shop-rds-sg"
   description = "allows connection from EC2 to RDS"
@@ -54,16 +55,6 @@ resource "aws_db_instance" "aws_shop_db" {
   snapshot_identifier = var.db_snapshot_identifier
   instance_class      = "db.t3.micro"
   storage_encrypted   = true #added because it was enabled also in the snapshot
-
-  # not needed while using snapshot
-  # allocated_storage = 20
-  # storage_type      = "gp2"
-  # engine            = "postgres"
-  # engine_version    = "17.6"
-
-  # db_name  = "aws_shop_db"
-  # username = var.db_username
-  # password = var.db_password
 
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]

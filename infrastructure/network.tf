@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-# internet gateway
+# Internet-Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -15,18 +15,28 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# public subnet
-resource "aws_subnet" "public" {
+# Public-Subnets
+resource "aws_subnet" "public-a" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet_cidr
+  cidr_block              = var.public_subnet_a_cidr
   map_public_ip_on_launch = true
   availability_zone       = "${var.aws_region}a"
   tags = {
-    Name = "aws-shop-public-subnet"
+    Name = "aws-shop-public-subnet-a"
   }
 }
 
-# ROute Table
+resource "aws_subnet" "public-b" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_b_cidr
+  map_public_ip_on_launch = true
+  availability_zone       = "${var.aws_region}b"
+  tags = {
+    Name = "aws-shop-public-subnet-b"
+  }
+}
+
+# Route-Table
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
   route {
@@ -38,12 +48,17 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-resource "aws_route_table_association" "public_rt_association" {
+resource "aws_route_table_association" "public_rt_association-1" {
   route_table_id = aws_route_table.public_rt.id
-  subnet_id      = aws_subnet.public.id
+  subnet_id      = aws_subnet.public-a.id
 }
 
-# security group
+resource "aws_route_table_association" "public_rt_association-2" {
+  route_table_id = aws_route_table.public_rt.id
+  subnet_id      = aws_subnet.public-b.id
+}
+
+# Security-Groups
 resource "aws_security_group" "web_sg" {
   name        = "web-server-sg"
   description = "allows HTTP & SSH access"
@@ -72,5 +87,29 @@ resource "aws_security_group" "web_sg" {
 
   tags = {
     Name = "aws-shop-sg"
+  }
+}
+
+resource "aws_security_group" "alb-sg" {
+  name        = "alb-sg"
+  description = "allows HTTP to ALB traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "ALB-Security-Group"
   }
 }

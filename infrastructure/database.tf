@@ -1,7 +1,7 @@
 # DB subnets
 resource "aws_subnet" "db_subnet_a" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.10.0/24"
+  cidr_block        = var.private_db_subnet_a
   availability_zone = "${var.aws_region}a"
   tags = {
     Name = "aws-shop-private-subnet-a"
@@ -10,7 +10,7 @@ resource "aws_subnet" "db_subnet_a" {
 
 resource "aws_subnet" "db_subnet_b" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.11.0/24"
+  cidr_block        = var.private_db_subnet_b
   availability_zone = "${var.aws_region}b"
   tags = {
     Name = "aws-shop-private-subnet-b"

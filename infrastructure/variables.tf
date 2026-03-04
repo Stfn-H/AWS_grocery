@@ -16,14 +16,32 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
-variable "public_subnet_cidr" {
-  description = "IP range for public subnet"
+variable "public_subnet_a_cidr" {
+  description = "IP range for public subnet a"
   type        = string
   default     = "10.0.1.0/24"
 }
 
+variable "public_subnet_b_cidr" {
+  description = "IP range for public subnet b"
+  type        = string
+  default     = "10.0.2.0/24"
+}
+
+variable "private_db_subnet_a" {
+  description = "IP range for private db subnet a"
+  type        = string
+  default     = "10.0.10.0/24"
+}
+
+variable "private_db_subnet_b" {
+  description = "IP range for private db subnet b"
+  type        = string
+  default     = "10.0.11.0/24"
+}
+
 variable "db_user" {
-  description = "DB USername"
+  description = "DB Username"
   type        = string
   default     = "postgres" # Standardwert, kann so bleiben
 }

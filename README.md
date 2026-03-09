@@ -13,7 +13,7 @@ This project demonstrates a production-ready, highly available 3-tier cloud infr
 The core objective was to build a resilient and scalable environment for a web application. The architecture is focusing on operational excellence and security prioritizing as well as reliability and cost-efficiency.
 
 ### 🖼 Infrastructure Diagram
-![AWS Grocery Shop Architecture](infrastructure/images/aws_grocery_diagram.png)
+![AWS Grocery Shop Architecture](images/aws_grocery_diagram.png)
 
 ---
 

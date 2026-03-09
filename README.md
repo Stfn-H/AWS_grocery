@@ -22,7 +22,7 @@ The core objective was to build a resilient and scalable environment for a web a
 ## 🔍 Architectural Breakdown
 
 ### 🌐 Networking & Security
-* **VPC Design:** A custom VPC (`aws-shop-vpc`) architected across two Availability Zones (`eu-central-1a` & `eu-central-1b`) to eliminate a Single Point of Failure.
+* **VPC Design:** A custom VPC (`aws-shop-vpc`) architected across two Availability Zones (`eu-central-1a` & `eu-central-1b`) to implement redundancy at the networking layer, ensuring the application remains available even if a single zone fails.
 * **Isolation Strategy:** While instances reside in public subnets to avoid NAT Gateway costs, they are protected by a **layered Security Group model**. Only traffic originating from the Load Balancer is permitted to reach the application port (Zero Trust approach).
 
 ### ⚖️ High Availability & Load Balancing

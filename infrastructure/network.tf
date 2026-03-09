@@ -68,7 +68,7 @@ resource "aws_security_group" "web_sg" {
     from_port   = 5000
     to_port     = 5000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.alb-sg.id]
   }
 
   ingress {

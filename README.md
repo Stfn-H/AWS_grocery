@@ -1,349 +1,149 @@
-# GroceryMate
+# 🛒 AWS Grocery Shop Infrastructure (High Availability & Scalability)
 
-[Für das deutsche ReadMe hier klicken](#grocerymate-deutsch)
-
-## 🏆 GroceryMate E-Commerce Platform
-
-[![Python](https://img.shields.io/badge/Language-Python%2C%20JavaScript-blue)](https://www.python.org/)
-[![OS](https://img.shields.io/badge/OS-Linux%2C%20Windows%2C%20macOS-green)](https://www.kernel.org/)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL-336791)](https://www.postgresql.org/)
-[![GitHub Release](https://img.shields.io/github/v/release/AlejandroRomanIbanez/AWS_grocery)](https://github.com/AlejandroRomanIbanez/AWS_grocery/releases/tag/v2.0.0)
-[![Free](https://img.shields.io/badge/Free_for_Non_Commercial_Use-brightgreen)](#-license)
-
-⭐ **Star us on GitHub** — it motivates us a lot!
+This project demonstrates a production-ready, highly available 3-tier cloud infrastructure on AWS. It was developed as part of the **Masterschool Cloud Engineering** Track to showcase modern DevOps and Cloud Architecture principles using Terraform (IaC), Docker, and AWS Managed Services.
 
 ---
 
-## 📌 Table of Contents
+## 🏗 Architecture & Approach
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Screenshots & Demo](#-screenshots--demo)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-  - [Clone Repository](#-clone-repository)
-  - [Configure PostgreSQL](#-configure-postgresql)
-  - [Populate Database](#-populate-database)
-  - [Set Up Python Environment](#-set-up-python-environment)
-  - [Set Environment Variables](#-set-environment-variables)
-  - [Start the Application](#-start-the-application)
-- [Usage](#-usage)
-- [Contributing](#-contributing)
-- [License](#-license)
+The core objective was to build a resilient and scalable environment for a web application. The architecture is focusing on operational excellence and security prioritizing as well as reliability and cost-efficiency.
 
-## 🚀 Overview
-
-GroceryMate is an application developed as part of the Masterschools program by **Alejandro Roman Ibanez**. It is a modern, full-featured e-commerce platform designed for seamless online grocery shopping. It provides an intuitive user interface and a secure backend, allowing users to browse products, manage their shopping basket, and complete purchases efficiently.
-
-GroceryMate is a modern, full-featured e-commerce platform designed for seamless online grocery shopping. It provides an intuitive user interface and a secure backend, allowing users to browse products, manage their shopping basket, and complete purchases efficiently.
-
-## 🛒 Features
-
-- **🛡️ User Authentication**: Secure registration, login, and session management.
-- **🔒 Protected Routes**: Access control for authenticated users.
-- **🔎 Product Search & Filtering**: Browse products, apply filters, and sort by category or price.
-- **⭐ Favorites Management**: Save preferred products.
-- **🛍️ Shopping Basket**: Add, view, modify, and remove items.
-- **💳 Checkout Process**:
-  - Secure billing and shipping information handling.
-  - Multiple payment options.
-  - Automatic total price calculation.
-
-## 📸 Screenshots & Demo
-
-![imagen](https://github.com/user-attachments/assets/ea039195-67a2-4bf2-9613-2ee1e666231a)
-![imagen](https://github.com/user-attachments/assets/a87e5c50-5a9e-45b8-ad16-2dbff41acd00)
-![imagen](https://github.com/user-attachments/assets/589aae62-67ef-4496-bd3b-772cd32ca386)
-![imagen](https://github.com/user-attachments/assets/2772b85e-81f7-446a-9296-4fdc2b652cb7)
-
-https://github.com/user-attachments/assets/d1c5c8e4-5b16-486a-b709-4cf6e6cce6bc
-
-## 📋 Prerequisites
-
-Ensure the following dependencies are installed before running the application:
-
-- **🐍 Python (>=3.11)**
-- **🐘 PostgreSQL** – Database for storing product and user information.
-- **🛠️ Git** – Version control system.
-
-## ⚙️ Installation
-
-### 🔹 Clone Repository
-
-```sh
-git clone --branch version2 https://github.com/AlejandroRomanIbanez/AWS_grocery.git && cd AWS_grocery
-```
-
-### 🔹 Configure PostgreSQL
-
-Before creating the database user, you can choose a custom username and password to enhance security. Replace `<your_secure_password>` with a strong password of your choice in the following commands.
-
-Create database and user:
-
-```sh
-psql -U postgres -c "CREATE DATABASE grocerymate_db;"
-psql -U postgres -c "CREATE USER grocery_user WITH ENCRYPTED PASSWORD '<your_secure_password>';"  # Replace <your_secure_password> with a strong password of your choice
-psql -U postgres -c "ALTER USER grocery_user WITH SUPERUSER;"
-```
-
-### 🔹 Populate Database
-
-```sh
-psql -U grocery_user -d grocerymate_db -f backend/app/sqlite_dump_clean.sql
-```
-
-Verify insertion:
-
-```sh
-psql -U grocery_user -d grocerymate_db -c "SELECT * FROM users;"
-psql -U grocery_user -d grocerymate_db -c "SELECT * FROM products;"
-```
-
-### 🔹 Set Up Python Environment
-
-
-Install dependencies in an activated virtual Enviroment:
-
-```sh
-cd backend
-pip install -r requirements.txt
-```
-OR (if pip doesn't exist)
-```sh
-pip3 install -r requirements.txt
-```
-
-### 🔹 Set Environment Variables
-
-Create a `.env` file:
-
-```sh
-touch .env  # macOS/Linux
-ni .env -Force  # Windows
-```
-
-Generate a secure JWT key:
-
-```sh
-python3 -c "import secrets; print(secrets.token_hex(32))"
-```
-
-Update `.env`:
-
-```sh
-nano .env
-```
-
-Fill in the following information (make sure to replace the placeholders):
-
-```ini
-JWT_SECRET_KEY=<your_generated_key>
-POSTGRES_USER=grocery_user
-POSTGRES_PASSWORD=<your_password>
-POSTGRES_DB=grocerymate_db
-POSTGRES_HOST=localhost
-POSTGRES_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}
-```
-
-### 🔹 Start the Application
-
-```sh
-python3 run.py
-```
-
-## 📖 Usage
-
-- Access the application at [http://localhost:5000](http://localhost:5000)
-- Register/Login to your account
-- Browse and search for products
-- Manage favorites and shopping basket
-- Proceed through the checkout process
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new feature branch (`feature/your-feature`).
-3. Implement your changes and commit them.
-4. Push your branch and create a pull request.
-
-## 📜 License
-
-This project is licensed under the MIT License.
-
-# GroceryMate Deutsch
-
-## 🏆 GroceryMate E-Commerce-Plattform
-
-[![Python](https://img.shields.io/badge/Language-Python%2C%20JavaScript-blue)](https://www.python.org/)
-[![OS](https://img.shields.io/badge/OS-Linux%2C%20Windows%2C%20macOS-green)](https://www.kernel.org/)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL-336791)](https://www.postgresql.org/)
-[![GitHub Release](https://img.shields.io/github/v/release/AlejandroRomanIbanez/AWS_grocery)](https://github.com/AlejandroRomanIbanez/AWS_grocery/releases/tag/v2.0.0)
-[![Free](https://img.shields.io/badge/Free_for_Non_Commercial_Use-brightgreen)](#-license)
-
-⭐ **Gib uns einen Stern auf GitHub** — das motiviert uns sehr!
+### 🖼 Infrastructure Diagram
+![AWS Grocery Shop Architecture](infrastructure/images/aws_grocery_diagram.png)
 
 ---
 
-## 📌 Inhaltsverzeichnis
+## 🔍 Architectural Breakdown
 
-- [Übersicht](#ubersicht)
-- [Funktionen](#-funktionen)
-- [Bildschirmfotos & Demo](#-Bildschirmfotos--Demo)
-- [Voraussetzungen](#-Voraussetzungen)
-- [Installationsanleitung](#-Installationsanleitung)
-  - [Repository klonen](#-Repository-klonen)
-  - [PostgreSQL konfigurieren](#-PostgreSQL-konfigurieren)
-  - [Datenbank befüllen](#-Datenbank-befüllen)
-  - [Python-Umgebung einrichten](#-Python-Umgebung-einrichten)
-  - [Umgebungsvariablen setzen](#-Umgebungsvariablen-setzen)
-  - [Anwendung starten](#-Anwendung-starten)
-- [Benutzung](#-Benutzung)
-- [Mitwirken](#-Mitwirken)
-- [Lizenz](#-Lizenz)
+### 🌐 Networking & Security
+* **VPC Design:** A custom VPC (`aws-shop-vpc`) architected across two Availability Zones (`eu-central-1a` & `eu-central-1b`) to eliminate a Single Point of Failure.
+* **Isolation Strategy:** While instances reside in public subnets to avoid NAT Gateway costs, they are protected by a **layered Security Group model**. Only traffic originating from the Load Balancer is permitted to reach the application port (Zero Trust approach).
 
-## 🚀 Übersicht
+### ⚖️ High Availability & Load Balancing
+* **Traffic Distribution:** An **Application Load Balancer (ALB)** serves as the single entry point, offloading SSL/TLS (readiness) and performing continuous **Health Checks** on the backend fleet.
+* **Redundancy:** By spanning the ALB and EC2 instances across multiple AZs, the application remains operational even if an entire AWS data center experiences an outage.
 
-GroceryMate ist eine Anwendung, die im Rahmen des Masterschools-Programms von **Alejandro Roman Ibanez** entwickelt wurde. Es handelt sich um eine moderne, voll ausgestattete E-Commerce-Plattform für ein nahtloses Online-Lebensmittelshopping. Sie bietet eine intuitive Benutzeroberfläche und ein sicheres Backend, mit dem Nutzer Produkte durchsuchen, ihren Warenkorb verwalten und Einkäufe effizient abschließen können.
+### 📈 Resilience & Scalability
+* **Auto-Scaling Group (ASG):** The compute layer is fully elastic. The ASG monitors CPU utilization and automatically launches or terminates instances to match real-time demand up to four instances, ensuring consistent performance during traffic spikes.
+* **Statelessness:** By offloading user assets to **S3 (grocery-avatars)**, the EC2 instances remain stateless. This allows the ASG to destroy and recreate instances at any time without data loss.
 
-GroceryMate ist eine moderne, voll ausgestattete E-Commerce-Plattform für ein nahtloses Online-Lebensmittelshopping. Sie bietet eine intuitive Benutzeroberfläche und ein sicheres Backend, mit dem Nutzer Produkte durchsuchen, ihren Warenkorb verwalten und Einkäufe effizient abschließen können.
+### 🗄️ Data Integrity
+* **Managed Persistence:** A **PostgreSQL RDS** instance is deployed in a dedicated Private Subnet Group. This ensures the database is never exposed to the public internet, accessible only by the application tier.
+* **Fast Recovery:** Deployment is streamlined using **RDS Snapshots**, allowing for a pre-seeded database environment that is ready for production immediately after the Terraform apply.
 
-## 🛒 Funktionen
+---
 
-- **🛡️ Benutzerauthentifizierung**: Sichere Registrierung, Anmeldung und Sitzungsverwaltung.
-- **🔒 Geschützte Routen**: Zugriffskontrolle für authentifizierte Nutzer.
-- **🔎 Produktsuche & Filter**: Produkte durchsuchen, Filter anwenden und nach Kategorie oder Preis sortieren.
-- **⭐ Favoritenverwaltung**: Bevorzugte Produkte speichern.
-- **🛍️ Warenkorb**: Artikel hinzufügen, anzeigen, ändern und entfernen.
-- **💳 Checkout-Prozess**:
-  - Sichere Verarbeitung von Rechnungs- und Lieferinformationen.
-  - Mehrere Zahlungsoptionen.
-  - Automatische Berechnung des Gesamtpreises.
+## 🛠 AWS Service & Deployment Logic
 
-## 📸 Bildschirmfotos & Demo
+This project follows a professional DevOps lifecycle by separating the **Management Foundation** from the **Application Artifacts** and the **Cloud Infrastructure**. This ensures that the environment is modular, secure, and easy to maintain.
 
-![imagen](https://github.com/user-attachments/assets/ea039195-67a2-4bf2-9613-2ee1e666231a)
-![imagen](https://github.com/user-attachments/assets/a87e5c50-5a9e-45b8-ad16-2dbff41acd00)
-![imagen](https://github.com/user-attachments/assets/589aae62-67ef-4496-bd3b-772cd32ca386)
-![imagen](https://github.com/user-attachments/assets/2772b85e-81f7-446a-9296-4fdc2b652cb7)
+### 🏗 Phase 1: Bootstrap (Remote Backend Setup)
+[*Click here to view the Bootstrap code.*](./bootstrap/main.tf) 
 
-https://github.com/user-attachments/assets/d1c5c8e4-5b16-486a-b709-4cf6e6cce6bc
+The primary goal of this phase is to move away from a "Local Workflow" to a "Cloud-Native Workflow." Before deploying any application resources, we must establish a **Remote Backend**.
+Additionally, I provision the Amazon ECR repository here to ensure a secure "landing zone" for the Docker image before the main infrastructure rollout begins.
 
-## 📋 Voraussetzungen
+#### Why doing this?
+* **Transition from Local to Remote:** By default, Terraform stores the `terraform.tfstate` file on your local machine. This is dangerous for production. If your computer fails or the file is deleted, Terraform "forgets" your infrastructure. 
+* **Single Source of Truth:** Storing the state in **S3** ensures that the infrastructure's configuration is persistent, versioned, and accessible from anywhere—not just your local environment.
+* **Collaboration & Locking:** To prevent "Race Conditions" (two people changing the same resource at once), we implement **DynamoDB State Locking**. This acts as a safeguard, ensuring only one deployment process can run at a time, preventing state corruption.
 
-Stelle sicher, dass die folgenden Abhängigkeiten installiert sind, bevor du die Anwendung ausführst:
+| Service           | Role in Bootstrap  | Why it's Essential                                                                     |
+|:------------------|:-------------------|:---------------------------------------------------------------------------------------|
+| **S3 (tf-state)** | **Remote Storage** | Moves the state file from your local disk to a secure, versioned cloud location.       |
+| **DynamoDB**      | **State Locking**  | Prevents concurrent executions that could lead to conflicting infrastructure changes.  |
+| **ECR**           | **Image Registry** | Provides a private, secure place to store and version Docker images before deployment. |
 
-- **🐍 Python (>=3.11)**
-- **🐘 PostgreSQL** – Datenbank zur Speicherung von Produkt- und Benutzerinformationen.
-- **🛠️ Git** – Versionskontrollsystem.
+---
 
-## ⚙️ Installationsanleitung
+###  🚢 Phase 2: Application Containerization (Manual Bridge)
+To bridge the gap between application code and cloud infrastructure, I decided to use a manual **Docker-to-ECR workflow**. This step ensures the latest version of the Grocery Shop application is available for the cloud environment.
+* **Process:** The application is containerized into a Docker image, authenticated against AWS, and pushed to the **Amazon ECR** repository created in the initial phase.
 
-### 🔹 Repository klonen
+#### Why a Manual Bridge?
+While enterprise environments typically automate this via CI/CD, I chose a manual workflow to decouple Infrastructure (IaC) from Application Logic. This approach highlights the "handshake" between the two: Terraform prepares the environment, while the Docker workflow provides the versioned artifact. It ensures that the infrastructure remains agnostic of the application's internal build process.
+* **Significance:** This demonstrates the decoupling of "Infrastructure" (managed by Terraform) and "Application Code" (managed via Docker).
 
-```sh
-git clone --branch version2 https://github.com/AlejandroRomanIbanez/AWS_grocery.git && cd AWS_grocery
+---
+
+### 🌐 Phase 3: Main Infrastructure (Application Stack)
+[*Click here to view the core Infrastructure code.*](./infrastructure/) 
+
+Once the Remote Backend is established and the Docker image is pushed to ECR, Phase 3 deploys the actual 3-tier environment. These resources rely on the S3/DynamoDB foundation to manage their lifecycle securely.
+
+| Service          | Layer           | Purpose                                                                    |
+|:-----------------|:----------------|:---------------------------------------------------------------------------|
+| **VPC**          | **Networking**  | Provides the isolated network environment.                                 |
+| **ALB**          | **Traffic**     | Handles public entry and balances load across the web tier.                |
+| **EC2 (ASG)**    | **Compute**     | Runs the dockerized app; scales automatically to ensure High Availability. |
+| **RDS**          | **Database**    | Managed PostgreSQL, strictly isolated in private subnets.                  |
+| **S3 (avatars)** | **App Storage** | Stores user assets, allowing EC2 instances to remain "stateless."          |
+| **IAM**          | **Security**    | Manages cross-service permissions (e.g., EC2 pulling from ECR).            |
+
+---
+
+## 📜 Infrastructure as Code (Terraform)
+
+### 📂 Terraform Structure
+
+```
+.
+bootstrap
+├── main.tf
+infrastructure
+├── asg_alb.tf
+├── database.tf
+├── iam.tf
+├── network.tf
+├── outputs.tf
+├── provider.tf
+├── s3.tf
+└── variables.tf
 ```
 
-### 🔹 PostgreSQL konfigurieren
+---
 
-Bevor du den Datenbankbenutzer erstellst, kannst du einen benutzerdefinierten Benutzernamen und ein Passwort wählen, um die Sicherheit zu erhöhen. Ersetze `<your_secure_password>` in den folgenden Befehlen durch ein starkes Passwort deiner Wahl.
+## 💡 Design Decisions & Challenges
 
-Datenbank und Benutzer erstellen:
+### 1. Networking & Security Trade-offs
 
-```sh
-psql -U postgres -c "CREATE DATABASE grocerymate_db;"
-psql -U postgres -c "CREATE USER grocery_user WITH ENCRYPTED PASSWORD '<your_secure_password>';"  # Ersetze <your_secure_password> durch ein starkes Passwort deiner Wahl
-psql -U postgres -c "ALTER USER grocery_user WITH SUPERUSER;"
-```
+From a security standpoint, the EC2 instances should ideally reside in a Private Subnet. This would require a NAT Gateway to allow the instances to reach the internet for Docker pulls (ECR) and OS updates.
 
-### 🔹 Datenbank befüllen
+* **Decision:** Within the scope of the Masterschool program, a NAT Gateway was not utilized due to its significant hourly costs. Instead, I launched the instances in Public Subnets but implemented a strict **"Zero Trust" Security Group policy**: the instances only accept incoming traffic **only** from the ALB's Security Group on the application port.
 
-```sh
-psql -U grocery_user -d grocerymate_db -f backend/app/sqlite_dump_clean.sql
-```
+### 2. High Availability Networking for RDS
 
-Einfügungen überprüfen:
+You will notice a second private database subnet (`db_subnet_b`) in a different Availability Zone. While the database currently runs as a Single-AZ instance to remain within the Free Tier, AWS requires a DB Subnet Group to span at least two Availability Zones. This design ensures that the infrastructure is "Multi-AZ Ready"—allowing for a seamless transition to a high-availability failover configuration with a single configuration toggle.
 
-```sh
-psql -U grocery_user -d grocerymate_db -c "SELECT * FROM users;"
-psql -U grocery_user -d grocerymate_db -c "SELECT * FROM products;"
-```
+### 3. Data Seeding via Snapshots
 
-### 🔹 Python-Umgebung einrichten
+To ensure a fast and reliable deployment of the database, I decided to work with **RDS Snapshots**. Instead of manual SQL seeding, a pre-configured snapshot containing dummy entries is restored. This ensures the application is fully functional and populated with data immediately after deployment.
 
+### 4. Workflow Efficiency: "One-Click" Infrastructure
 
-Abhängigkeiten in einer aktivierten virtuellen Umgebung installieren:
+A key requirement for this project was to ensure the entire environment is fully reproducible and ephemeral.
 
-```sh
-cd backend
-pip install -r requirements.txt
-```
-ODER (falls pip nicht existiert)
-```sh
-pip3 install -r requirements.txt
-```
+* **The Goal:** I wanted to be able to spin up the complete 3-tier stack for development and shut it down entirely to avoid unnecessary AWS costs (terraform apply / destroy).
+* **The Challenge:** Normally, databases and application states make "clean" redeployments difficult. Re-seeding data or re-configuring container runtimes manually every time would defeat the purpose of IaC.
+* **The Solution:**
+    * **ECR and User Data:** By separating the Docker image push (Phase 2) from the infrastructure, the EC2 instances can pull the latest version automatically during the boot process.
+    * **RDS Snapshot:** By using a pre-seeded snapshot, the database is "production-ready" immediately after the Terraform apply, with no manual SQL imports needed.
+---
 
-### 🔹 Umgebungsvariablen setzen
+## 💰 Cost Consideration & Optimization
 
-Eine .env-Datei erstellen:
+* **Free Tier Focus:** Used `t2.micro` instances and managed RDS within the Free Tier limits where possible.
+* **Cost Avoidance:** Chose Security Group isolation over NAT Gateways to save ~$32/month per gateway.
+* **Cleanup:** All resources are tagged for easy tracking and can be destroyed via Terraform to prevent orphaned resource costs.
 
-```sh
-touch .env  # macOS/Linux
-ni .env -Force  # Windows
-```
+---
 
-Einen sicheren JWT-Schlüssel generieren:
+## 🚀 Future Improvements
 
-```sh
-python3 -c "import secrets; print(secrets.token_hex(32))"
-```
+* **Private Isolation:** Adding a NAT Gateway or VPC Endpoints to move all compute resources to private subnets.
+* **CI/CD Integration:** Implementing GitHub Actions to automate the `docker build` -> `push` -> `terraform apply` workflow.
+* **Monitoring:** Setting up CloudWatch Dashboards for real-time visibility into traffic and error rates.
 
-.env-Datei aktualisieren:
+---
 
-```sh
-nano .env
-```
-
-Fülle die folgenden Informationen aus (stelle sicher, dass du die Platzhalter ersetzt):
-
-```ini
-JWT_SECRET_KEY=<your_generated_key>
-POSTGRES_USER=grocery_user
-POSTGRES_PASSWORD=<your_secure_password>
-POSTGRES_DB=grocerymate_db
-POSTGRES_HOST=localhost
-POSTGRES_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}
-```
-
-### 🔹 Anwendung starten
-
-```sh
-python3 run.py
-```
-
-## 📖 Benutzung
-
-- Greife auf die Anwendung unter [http://localhost:5000](http://localhost:5000) zu
-- Registriere dich oder melde dich bei deinem Konto an
-- Durchsuche und finde Produkte
-- Verwalte Favoriten und den Warenkorb
-- Durchlaufe den Checkout-Prozess
-
-## 🤝 Mitwirken
-
-Beiträge zu diesem Projekt sind willkommen! Bitte folge diesen Schritten:
-
-1. Forke das Repository.
-2. Erstelle einen neuen Feature-Branch (`feature/your-feature`).
-3. Implementiere deine Änderungen und committe sie.
-4. Pushe deinen Branch und erstelle einen Pull-Request.
-
-## 📜 Lizenz
-
-Dieses Projekt ist unter der MIT-Lizenz lizenziert.
-
-
-
-
+*Developed as a Capstone Project for the Masterschool Cloud Engineering Program.*

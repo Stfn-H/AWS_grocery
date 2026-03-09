@@ -2,7 +2,11 @@
 
 This project demonstrates a production-ready, highly available 3-tier cloud infrastructure on AWS. It was developed as part of the **Masterschool Cloud Engineering** Track to showcase modern DevOps and Cloud Architecture principles using Terraform (IaC), Docker, and AWS Managed Services.
 
+
+
 ---
+
+<br>
 
 ## 🏗 Architecture & Approach
 
@@ -12,6 +16,8 @@ The core objective was to build a resilient and scalable environment for a web a
 ![AWS Grocery Shop Architecture](infrastructure/images/aws_grocery_diagram.png)
 
 ---
+
+<br>
 
 ## 🔍 Architectural Breakdown
 
@@ -32,6 +38,8 @@ The core objective was to build a resilient and scalable environment for a web a
 * **Fast Recovery:** Deployment is streamlined using **RDS Snapshots**, allowing for a pre-seeded database environment that is ready for production immediately after the Terraform apply.
 
 ---
+
+<br>
 
 ## 🛠 AWS Service & Deployment Logic
 
@@ -56,6 +64,8 @@ Additionally, I provision the Amazon ECR repository here to ensure a secure "lan
 
 ---
 
+<br>
+
 ###  🚢 Phase 2: Application Containerization (Manual Bridge)
 To bridge the gap between application code and cloud infrastructure, I decided to use a manual **Docker-to-ECR workflow**. This step ensures the latest version of the Grocery Shop application is available for the cloud environment.
 * **Process:** The application is containerized into a Docker image, authenticated against AWS, and pushed to the **Amazon ECR** repository created in the initial phase.
@@ -65,6 +75,8 @@ While enterprise environments typically automate this via CI/CD, I chose a manua
 * **Significance:** This demonstrates the decoupling of "Infrastructure" (managed by Terraform) and "Application Code" (managed via Docker).
 
 ---
+
+<br>
 
 ### 🌐 Phase 3: Main Infrastructure (Application Stack)
 [*Click here to view the core Infrastructure code.*](./infrastructure/) 
@@ -81,6 +93,8 @@ Once the Remote Backend is established and the Docker image is pushed to ECR, Ph
 | **IAM**          | **Security**    | Manages cross-service permissions (e.g., EC2 pulling from ECR).            |
 
 ---
+
+<br>
 
 ## 📜 Infrastructure as Code (Terraform)
 
@@ -102,6 +116,8 @@ infrastructure
 ```
 
 ---
+
+<br>
 
 ## 💡 Design Decisions & Challenges
 
@@ -130,6 +146,8 @@ A key requirement for this project was to ensure the entire environment is fully
     * **RDS Snapshot:** By using a pre-seeded snapshot, the database is "production-ready" immediately after the Terraform apply, with no manual SQL imports needed.
 ---
 
+<br>
+
 ## 💰 Cost Consideration & Optimization
 
 * **Free Tier Focus:** Used `t2.micro` instances and managed RDS within the Free Tier limits where possible.
@@ -138,6 +156,8 @@ A key requirement for this project was to ensure the entire environment is fully
 
 ---
 
+<br>
+
 ## 🚀 Future Improvements
 
 * **Private Isolation:** Adding a NAT Gateway or VPC Endpoints to move all compute resources to private subnets.
@@ -145,5 +165,7 @@ A key requirement for this project was to ensure the entire environment is fully
 * **Monitoring:** Setting up CloudWatch Dashboards for real-time visibility into traffic and error rates.
 
 ---
+
+<br>
 
 *Developed as a Capstone Project for the Masterschool Cloud Engineering Program.*
